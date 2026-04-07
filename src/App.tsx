@@ -1,14 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 
 import { API_URL } from "./constants";
+import type { House } from "./types";
 
 import "./App.css";
 
-const SearchInput = ({ searchQuery, handleSearchQueryChange }) => {
+type SearchInputProps = {
+  searchQuery: string;
+  handleSearchQueryChange: (event: ChangeEvent<HTMLInputElement>) => void;
+};
+
+type HouseProps = {
+  house: House;
+  traitSearchQuery: string;
+  onTraitSearchChange: (houseId: string, value: string) => void;
+};
+
+const SearchInput = ({
+  searchQuery,
+  handleSearchQueryChange,
+}: SearchInputProps) => {
   return <input value={searchQuery} onChange={handleSearchQueryChange} />;
 };
 
-const House = ({ house, traitSearchQuery, onTraitSearchChange }) => {
+const House = ({
+  house,
+  traitSearchQuery,
+  onTraitSearchChange,
+}: HouseProps) => {
   const filteredTraits =
     house.traits?.filter((trait) =>
       trait.name.toLowerCase().includes(traitSearchQuery.toLowerCase()),
@@ -33,15 +52,17 @@ const House = ({ house, traitSearchQuery, onTraitSearchChange }) => {
 };
 
 function App() {
-  const [houses, setHouses] = useState([]);
+  const [houses, setHouses] = useState<House[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [traitSearchQueries, setTraitSearchQueries] = useState({});
+  const [traitSearchQueries, setTraitSearchQueries] = useState<
+    Record<string, string>
+  >({});
 
-  const handleSearchQueryChange = (event) => {
+  const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleTraitSearchChange = (houseId, value) => {
+  const handleTraitSearchChange = (houseId: string, value: string) => {
     setTraitSearchQueries((prev) => ({
       ...prev,
       [houseId]: value,
@@ -52,7 +73,7 @@ function App() {
     const fetchHouses = async () => {
       try {
         const res = await fetch(API_URL);
-        const data = await res.json();
+        const data: House[] = await res.json();
         setHouses(data);
       } catch (error) {}
     };
