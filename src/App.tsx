@@ -5,22 +5,12 @@ import type { House } from "./types";
 
 import "./App.css";
 
-type SearchInputProps = {
-  searchQuery: string;
-  handleSearchQueryChange: (event: ChangeEvent<HTMLInputElement>) => void;
-};
+import SearchInput from "./components/SearchInput";
 
 type HouseProps = {
   house: House;
   traitSearchQuery: string;
   onTraitSearchChange: (houseId: string, value: string) => void;
-};
-
-const SearchInput = ({
-  searchQuery,
-  handleSearchQueryChange,
-}: SearchInputProps) => {
-  return <input value={searchQuery} onChange={handleSearchQueryChange} />;
 };
 
 const House = ({
