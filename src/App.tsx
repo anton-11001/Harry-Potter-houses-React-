@@ -1,49 +1,18 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 
 import { API_URL } from "./constants";
-import type { House } from "./types";
+import type { HouseType } from "./types";
 
 import "./App.css";
 
 import SearchInput from "./components/SearchInput";
-
-type HouseProps = {
-  house: House;
-  traitSearchQuery: string;
-  onTraitSearchChange: (houseId: string, value: string) => void;
-};
-
-const House = ({
-  house,
-  traitSearchQuery,
-  onTraitSearchChange,
-}: HouseProps) => {
-  const filteredTraits =
-    house.traits?.filter((trait) =>
-      trait.name.toLowerCase().includes(traitSearchQuery.toLowerCase()),
-    ) ?? [];
-
-  return (
-    <div style={{ border: "1px solid", padding: "8px", margin: "8px" }}>
-      <h3>{house.name}</h3>
-      <SearchInput
-        searchQuery={traitSearchQuery}
-        handleSearchQueryChange={(event) =>
-          onTraitSearchChange(house.id, event.target.value)
-        }
-      />
-      <ul>
-        {filteredTraits.map((trait) => (
-          <li key={trait.id}>{trait.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+import House from "./components/House";
 
 function App() {
-  const [houses, setHouses] = useState<House[]>([]);
+  const [houses, setHouses] = useState<HouseType[]>([]);
+  
   const [searchQuery, setSearchQuery] = useState("");
+
   const [traitSearchQueries, setTraitSearchQueries] = useState<
     Record<string, string>
   >({});
@@ -63,7 +32,7 @@ function App() {
     const fetchHouses = async () => {
       try {
         const res = await fetch(API_URL);
-        const data: House[] = await res.json();
+        const data: HouseType[] = await res.json();
         setHouses(data);
       } catch (error) {}
     };

@@ -9,7 +9,7 @@ export type Trait = {
   name: string;
 };
 
-export type House = {
+export type HouseType = {
   id: string;
   name: string;
   houseColours: string;
