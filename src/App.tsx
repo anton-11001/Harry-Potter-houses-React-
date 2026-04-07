@@ -10,7 +10,7 @@ function App() {
   const { data: houses, isLoading, error } = useHouses();
 
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const [traitSearchQueries, setTraitSearchQueries] = useState<
     Record<string, string>
   >({});
@@ -31,28 +31,40 @@ function App() {
   );
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <p className="status-message">Loading...</p>;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className="status-message status-message--error">{error}</p>;
   }
 
   return (
-    <div className="App">
-      <SearchInput
-        searchQuery={searchQuery}
-        handleSearchQueryChange={handleSearchQueryChange}
-      />
+    <div className="app">
+      <header className="app__header">
+        <h1 className="app__title">Houses Explorer</h1>
+        <p className="app__description">
+          Browse wizard houses and filter their traits
+        </p>
+      </header>
 
-      {filteredHouses.map((house) => (
-        <House
-          key={house.id}
-          house={house}
-          traitSearchQuery={traitSearchQueries[house.id] ?? ""}
-          onTraitSearchChange={handleTraitSearchChange}
+      <section className="app__search">
+        <SearchInput
+          searchQuery={searchQuery}
+          handleSearchQueryChange={handleSearchQueryChange}
+          placeholder="Search houses..."
         />
-      ))}
+      </section>
+
+      <section className="houses-grid">
+        {filteredHouses.map((house) => (
+          <House
+            key={house.id}
+            house={house}
+            traitSearchQuery={traitSearchQueries[house.id] ?? ""}
+            onTraitSearchChange={handleTraitSearchChange}
+          />
+        ))}
+      </section>
     </div>
   );
 }
