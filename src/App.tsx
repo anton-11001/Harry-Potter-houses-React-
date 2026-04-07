@@ -1,25 +1,19 @@
-import { useState, useEffect, type ChangeEvent } from "react";
-
-import { API_URL } from "./constants";
-import type { HouseType } from "./types";
+import { useState, type ChangeEvent } from "react";
 
 import "./App.css";
 
 import SearchInput from "./components/SearchInput";
 import House from "./components/House";
+import useHouses from "./hooks/useHouses";
 
 function App() {
-  const [houses, setHouses] = useState<HouseType[]>([]);
+  const { data: houses, isLoading, error } = useHouses();
 
   const [searchQuery, setSearchQuery] = useState("");
-
+  
   const [traitSearchQueries, setTraitSearchQueries] = useState<
     Record<string, string>
   >({});
-
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const [error, setError] = useState<string | null>(null);
 
   const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -31,30 +25,6 @@ function App() {
       [houseId]: value,
     }));
   };
-
-  useEffect(() => {
-    const fetchHouses = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const res = await fetch(API_URL);
-
-        if (!res.ok) {
-          throw new Error(`Request failed: ${res.status}`);
-        }
-
-        const data: HouseType[] = await res.json();
-        setHouses(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHouses();
-  }, []);
 
   const filteredHouses = houses.filter((house) =>
     house.name.toLowerCase().includes(searchQuery.toLowerCase()),
