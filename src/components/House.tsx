@@ -1,14 +1,30 @@
 import SearchInput from "./SearchInput";
 
-import type { HouseType } from "./../types";
+import type { HouseType } from "../types";
 
 type HouseProps = {
   house: HouseType;
   traitSearchQuery: string;
   onTraitSearchChange: (houseId: string, value: string) => void;
+  isLoading: boolean;
+  error: string | null;
 };
 
-function House({ house, traitSearchQuery, onTraitSearchChange }: HouseProps) {
+function House({
+  house,
+  traitSearchQuery,
+  onTraitSearchChange,
+  isLoading,
+  error,
+}: HouseProps) {
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   const filteredTraits =
     house.traits?.filter((trait) =>
       trait.name.toLowerCase().includes(traitSearchQuery.toLowerCase()),

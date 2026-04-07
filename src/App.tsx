@@ -10,12 +10,13 @@ import House from "./components/House";
 
 function App() {
   const [houses, setHouses] = useState<HouseType[]>([]);
-  
   const [searchQuery, setSearchQuery] = useState("");
-
   const [traitSearchQueries, setTraitSearchQueries] = useState<
     Record<string, string>
   >({});
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -31,10 +32,26 @@ function App() {
   useEffect(() => {
     const fetchHouses = async () => {
       try {
+        setIsLoading(true);
+        setError(null);
+
         const res = await fetch(API_URL);
+
+        if (!res.ok) {
+          throw new Error(`Request failed: ${res.status}`);
+        }
+
         const data: HouseType[] = await res.json();
         setHouses(data);
-      } catch (error) {}
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Something went wrong");
+        }
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchHouses();
@@ -57,6 +74,8 @@ function App() {
           house={house}
           traitSearchQuery={traitSearchQueries[house.id] ?? ""}
           onTraitSearchChange={handleTraitSearchChange}
+          isLoading={isLoading}
+          error={error}
         />
       ))}
     </div>
